@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  # ── MySQL Database ─────────────────────────────────────
+  db:
+    image: mysql:8.0
+    container_name: smartmeal-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: supersecret
+      MYSQL_DATABASE: smartmeal
+    ports:
+      - "3306:3306"
+    volumes:
+      - smartmeal_data:/var/lib/mysql
+      - ./backend/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-psupersecret"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── FastAPI Backend ────────────────────────────────────
+  backend:
+    build: ./backend
+    container_name: smartmeal-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    environment:
+      - DB_HOST=db
+
+  # ── Next.js Frontend ───────────────────────────────────
+  frontend:
+    build: ./frontend
+    container_name: smartmeal-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./frontend/.env.local
+
+volumes:
+  smartmeal_data:

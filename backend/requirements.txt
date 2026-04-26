@@ -1,0 +1,33 @@
+# Smart Meal Planner — Backend Dependencies
+
+# Core framework
+fastapi==0.115.0
+uvicorn[standard]==0.30.0
+
+# Async MySQL driver
+aiomysql==0.2.0
+PyMySQL==1.1.1
+
+# Authentication
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+bcrypt==4.2.0
+
+# HTTP client (async, for Edamam API)
+httpx==0.27.0
+
+# Data validation
+pydantic==2.9.0
+email-validator==2.2.0
+
+# Environment variables
+python-dotenv==1.0.1
+
+# WebSockets (included with uvicorn[standard])
+websockets==13.0
+
+# CORS middleware
+# (included in FastAPI/Starlette)
+
+# Payment gateway (Razorpay)
+razorpay==1.4.2

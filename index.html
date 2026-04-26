@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartMeal — Personalized Nutrition & Meal Planning</title>
+    <meta name="description" content="AI-powered personalized meal planning, macro tracking, and smart grocery lists — tailored to your body and fitness goals.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- QR Code library for dynamic UPI QR generation -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <!-- Razorpay Checkout.js — launches the real payment overlay -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <!-- ═══════════════════════════ LOADING OVERLAY ═══════════════════════════ -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-text">Loading your dashboard...</div>
+    </div>
+
+    <!-- ═══════════════════════════ SCREEN 1: AUTH ═══════════════════════════ -->
+    <div class="screen auth-screen active fade-in" id="screen-auth">
+        <div class="auth-visual">
+            <div class="auth-visual-img" style="background-image: url('https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=1200&q=80');"></div>
+            <div class="auth-visual-overlay"></div>
+            <div class="auth-visual-content">
+                <div class="auth-visual-badge"><span class="dot"></span> Precision Nutrition</div>
+                <h2>Eat Smarter.<br><span class="gradient-text">Live Stronger.</span></h2>
+                <p>Your personalized meal plans, macro tracking, and grocery lists — powered by your unique biometrics.</p>
+                <ul class="auth-visual-features">
+                    <li><span class="feat-icon">🎯</span> Personalized macros based on your body</li>
+                    <li><span class="feat-icon">📅</span> Weekly meal plans you'll actually love</li>
+                    <li><span class="feat-icon">🛒</span> Smart grocery lists by aisle</li>
+                    <li><span class="feat-icon">📊</span> Track progress toward your goals</li>
+                </ul>
+            </div>
+        </div>
+        <div class="auth-form-panel">
+            <div class="auth-form-container">
+                <!-- Dashing Logo -->
+                <a class="auth-logo" id="logo-home-auth" href="#" style="cursor:pointer;">
+                    <div class="brand-logo-wrap">
+                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=80&h=80&fit=crop&q=90" alt="SmartMeal fresh food" class="brand-logo-img">
+                        <div class="brand-logo-badge">S</div>
+                    </div>
+                    <span class="auth-logo-text">SmartMeal</span>
+                </a>
+
+                <!-- Login Form -->
+                <div class="auth-form active" id="login-form">
+                    <h2 class="auth-title">Welcome back</h2>
+                    <p class="auth-subtitle">Sign in to access your personalized meal plan.</p>
+                    <div class="social-btns">
+                        <button class="social-btn" type="button"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Google</button>
+                        <button class="social-btn" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Apple</button>
+                    </div>
+                    <div class="auth-divider"><span>or</span></div>
+                    <div class="form-group">
+                        <label class="form-label" for="login-email">Email address</label>
+                        <input class="form-input" type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <label class="form-label" for="login-password">Password</label>
+                            <a href="#" class="forgot-pw-link" id="forgot-pw-link">Forgot password?</a>
+                        </div>
+                        <input class="form-input" type="password" id="login-password" placeholder="Enter your password" autocomplete="current-password">
+                    </div>
+                    <button class="auth-btn" id="btn-login" type="button"><span class="btn-text">Sign In</span><div class="btn-spinner"></div></button>
+                    <p class="auth-toggle" style="margin-top:20px;">Don't have an account? <a id="show-signup">Create one</a></p>
+                </div>
+
+                <!-- Signup Form -->
+                <div class="auth-form" id="signup-form">
+                    <h2 class="auth-title">Create your account</h2>
+                    <p class="auth-subtitle">Start your personalized nutrition journey today.</p>
+                    <div class="social-btns">
+                        <button class="social-btn" type="button"><svg viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg> Google</button>
+                        <button class="social-btn" type="button"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg> Apple</button>
+                    </div>
+                    <div class="auth-divider"><span>or</span></div>
+                    <div class="form-row">
+                        <div class="form-group"><label class="form-label" for="signup-first">First name</label><input class="form-input" type="text" id="signup-first" placeholder="Jane" autocomplete="given-name"></div>
+                        <div class="form-group"><label class="form-label" for="signup-last">Last name</label><input class="form-input" type="text" id="signup-last" placeholder="Doe" autocomplete="family-name"></div>
+                    </div>
+                    <div class="form-group"><label class="form-label" for="signup-email">Email address</label><input class="form-input" type="email" id="signup-email" placeholder="you@example.com" autocomplete="email"></div>
+                    <div class="form-group">
+                        <label class="form-label" for="signup-password">Create password</label>
+                        <input class="form-input" type="password" id="signup-password" placeholder="Min 8 characters" autocomplete="new-password">
+                        <div class="password-strength" id="pw-strength"><div class="strength-bar" id="str-1"></div><div class="strength-bar" id="str-2"></div><div class="strength-bar" id="str-3"></div><div class="strength-bar" id="str-4"></div></div>
+                        <div class="strength-text" id="pw-strength-text"></div>
+                    </div>
+                    <button class="auth-btn" id="btn-signup" type="button"><span class="btn-text">Create Account</span><div class="btn-spinner"></div></button>
+                    <p class="auth-toggle" style="margin-top:20px;">Already have an account? <a id="show-login">Sign in</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════ SCREEN 2: ONBOARDING ═══════════════════════════ -->
+    <div class="screen onboarding-screen" id="screen-onboarding">
+        <div class="onboarding-header">
+            <a class="onboarding-logo" id="logo-home-onb" href="#" style="cursor:pointer;">
+                <div class="brand-logo-wrap brand-logo-sm">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=60&h=60&fit=crop&q=90" alt="" class="brand-logo-img">
+                    <div class="brand-logo-badge">S</div>
+                </div>
+                <span>SmartMeal</span>
+            </a>
+            <div class="onboarding-progress-bar"><div class="onboarding-progress-fill" id="onb-progress-fill"></div></div>
+            <div class="onboarding-step-count" id="onb-step-count">Step 1 of 4</div>
+        </div>
+        <div class="onboarding-body">
+            <!-- Step 1 --><div class="onboarding-step active" id="onb-step-1"><div class="step-emoji">👤</div><h2 class="step-title">Let's get to know you</h2><p class="step-desc">We'll use this to calculate your ideal daily nutrition.</p><div class="gender-options"><div class="gender-option" data-gender="male"><div class="icon">👨</div><div class="label">Male</div></div><div class="gender-option" data-gender="female"><div class="icon">👩</div><div class="label">Female</div></div><div class="gender-option" data-gender="other"><div class="icon">🧑</div><div class="label">Other</div></div></div><div class="slider-group"><div class="slider-header"><span class="slider-label">Age</span><span class="slider-value"><span id="age-val">25</span> <span class="unit">years</span></span></div><input type="range" id="age-slider" min="16" max="80" value="25"></div><div class="onboarding-nav"><button class="onb-btn onb-btn-primary" id="onb-next-1">Continue →</button></div></div>
+            <!-- Step 2 --><div class="onboarding-step" id="onb-step-2"><div class="step-emoji">📏</div><h2 class="step-title">Your body metrics</h2><p class="step-desc">This helps us calculate your exact calorie and macro targets.</p><div class="slider-group"><div class="slider-header"><span class="slider-label">Height</span><span class="slider-value"><span id="height-val">170</span> <span class="unit">cm</span></span></div><input type="range" id="height-slider" min="140" max="220" value="170"></div><div class="slider-group"><div class="slider-header"><span class="slider-label">Body Weight</span><span class="slider-value"><span id="weight-val">70</span> <span class="unit">kg</span></span></div><input type="range" id="weight-slider" min="40" max="160" value="70"></div><div class="onboarding-nav"><button class="onb-btn onb-btn-secondary" id="onb-back-2">← Back</button><button class="onb-btn onb-btn-primary" id="onb-next-2">Continue →</button></div></div>
+            <!-- Step 3 --><div class="onboarding-step" id="onb-step-3"><div class="step-emoji">🏃</div><h2 class="step-title">Your daily lifestyle</h2><p class="step-desc">How active are you on a typical day?</p><div class="lifestyle-grid"><div class="lifestyle-card" data-lifestyle="sedentary"><div class="icon">🛋️</div><div class="title">Sedentary</div><div class="desc">Desk job, little exercise</div></div><div class="lifestyle-card" data-lifestyle="moderate"><div class="icon">🚶</div><div class="title">Moderately Active</div><div class="desc">Light exercise 3-4×/week</div></div><div class="lifestyle-card" data-lifestyle="active"><div class="icon">🏋️</div><div class="title">Active Gym-Goer</div><div class="desc">Intense training 5-6×/week</div></div><div class="lifestyle-card" data-lifestyle="athlete"><div class="icon">⚡</div><div class="title">Athlete</div><div class="desc">Professional-level training</div></div></div><div class="onboarding-nav"><button class="onb-btn onb-btn-secondary" id="onb-back-3">← Back</button><button class="onb-btn onb-btn-primary" id="onb-next-3">Calculate My Plan →</button></div></div>
+            <!-- Step 4 --><div class="onboarding-step" id="onb-step-4"><div class="calculating-content" id="calc-content"><div class="calc-rings"><svg viewBox="0 0 200 200"><circle class="calc-ring-track" cx="100" cy="100" r="40"/><circle class="calc-ring-fill calc-ring-fat" cx="100" cy="100" r="40" stroke-dasharray="251.3" stroke-dashoffset="251.3" transform="rotate(-90 100 100)" style="animation: ringDraw 1.8s ease-out 0.3s forwards;"/><circle class="calc-ring-track" cx="100" cy="100" r="58"/><circle class="calc-ring-fill calc-ring-carbs" cx="100" cy="100" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4" transform="rotate(-90 100 100)" style="animation: ringDraw 1.8s ease-out 0.6s forwards;"/><circle class="calc-ring-track" cx="100" cy="100" r="76"/><circle class="calc-ring-fill calc-ring-protein" cx="100" cy="100" r="76" stroke-dasharray="477.5" stroke-dashoffset="477.5" transform="rotate(-90 100 100)" style="animation: ringDraw 1.8s ease-out 0.9s forwards;"/></svg><div class="calc-center"><div class="emoji">🧬</div></div></div><div class="calc-text" id="calc-status-text">Calculating your personalized macronutrients...</div><div class="calc-subtext">Analyzing your biometrics to create exact daily targets</div><div class="calc-dots"><div class="calc-dot"></div><div class="calc-dot"></div><div class="calc-dot"></div></div><div class="results-grid" id="results-grid" style="display:none;"><div class="result-card calories"><div class="rc-value" id="res-cal">—</div><div class="rc-label">Daily Calories</div></div><div class="result-card protein"><div class="rc-value" id="res-protein">—</div><div class="rc-label">Protein (g)</div></div><div class="result-card carbs"><div class="rc-value" id="res-carbs">—</div><div class="rc-label">Carbs (g)</div></div><div class="result-card fat"><div class="rc-value" id="res-fat">—</div><div class="rc-label">Fat (g)</div></div></div><div class="onboarding-nav" id="calc-nav" style="display:none;"><button class="onb-btn onb-btn-primary" id="onb-finish">Let's Go! 🚀</button></div></div></div>
+        </div>
+    </div>
+    <style>@keyframes ringDraw { to { stroke-dashoffset: 80; } }</style>
+
+    <!-- ═══════════════════════════ SCREEN 3: DASHBOARD + VIEWS ═══════════════════════════ -->
+    <div class="screen app-screen" id="screen-dashboard">
+        <button class="mobile-sidebar-toggle" id="mobile-sidebar-btn">☰</button>
+        <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <nav class="sidebar" id="sidebar" role="navigation">
+            <a class="sidebar-logo" id="logo-home-sidebar" href="#" style="cursor:pointer;">
+                <div class="brand-logo-wrap brand-logo-sm">
+                    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=60&h=60&fit=crop&q=90" alt="" class="brand-logo-img">
+                    <div class="brand-logo-badge">S</div>
+                </div>
+                <span class="sidebar-logo-text">SmartMeal</span>
+            </a>
+            <div class="sidebar-nav">
+                <div class="sidebar-nav-label">Menu</div>
+                <button class="sidebar-nav-item active" data-view="dashboard" id="nav-dashboard"><span class="nav-icon">📊</span> Dashboard</button>
+                <button class="sidebar-nav-item" data-view="grocery" id="nav-grocery"><span class="nav-icon">🛒</span> Grocery List</button>
+                <button class="sidebar-nav-item" data-view="cart" id="nav-cart"><span class="nav-icon">🛍️</span> Cart <span class="cart-badge" id="cart-nav-badge" style="display:none;">0</span></button>
+                <button class="sidebar-nav-item" data-view="meals" id="nav-meals"><span class="nav-icon">🍽️</span> Meal Plans</button>
+                <div class="sidebar-nav-label">Insights</div>
+                <button class="sidebar-nav-item" data-view="progress" id="nav-progress"><span class="nav-icon">📈</span> Progress</button>
+                <button class="sidebar-nav-item" data-view="settings" id="nav-settings"><span class="nav-icon">⚙️</span> Settings</button>
+            </div>
+            <div class="sidebar-user">
+                <div class="sidebar-avatar" id="user-avatar">JD</div>
+                <div class="sidebar-user-info">
+                    <div class="sidebar-user-name" id="user-display-name">Jane Doe</div>
+                    <div class="sidebar-user-plan">Premium Plan</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content" id="main-content">
+
+            <!-- ─── DASHBOARD VIEW ─── -->
+            <div class="app-view active" id="view-dashboard">
+                <div class="dash-header">
+                    <div class="dash-greeting">
+                        <div class="greeting-left"><h1 id="greeting-text">Good evening, Jane 👋</h1><p>Here's your nutrition overview for today</p></div>
+                        <div class="greeting-right">
+                            <button class="cart-float-btn" id="cart-float-btn" title="Shopping Cart">🛍️ <span class="cart-float-count" id="cart-float-count">0</span></button>
+                            <button class="notif-btn" id="notif-btn" title="Notifications">🔔<span class="notif-badge">3</span></button>
+                        </div>
+                    </div>
+                    <div class="search-container" id="search-container">
+                        <div class="search-bar"><span class="search-icon">🔍</span><input class="search-input" type="text" id="global-search" placeholder="Search meals, ingredients, or fitness goals..." autocomplete="off"><div class="search-kbd"><kbd>⌘</kbd><kbd>K</kbd></div></div>
+                        <div class="search-dropdown" id="search-dropdown">
+                            <div class="search-group-title">Meals</div>
+                            <div class="search-result-item" data-type="meal"><div class="sri-icon meal">🥗</div><div class="sri-text"><div class="sri-name">Grilled Chicken Quinoa Bowl</div><div class="sri-meta">480 cal · 42g protein · Lunch</div></div></div>
+                            <div class="search-result-item" data-type="meal"><div class="sri-icon meal">🥑</div><div class="sri-text"><div class="sri-name">Avocado Egg Toast</div><div class="sri-meta">320 cal · 18g protein · Breakfast</div></div></div>
+                            <div class="search-result-item" data-type="meal"><div class="sri-icon meal">🍣</div><div class="sri-text"><div class="sri-name">Salmon Teriyaki Bowl</div><div class="sri-meta">560 cal · 38g protein · Dinner</div></div></div>
+                            <div class="search-group-title">Ingredients</div>
+                            <div class="search-result-item" data-type="ingredient"><div class="sri-icon ingredient">🍗</div><div class="sri-text"><div class="sri-name">Chicken Breast</div><div class="sri-meta">165 cal/100g · 31g protein</div></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="bento-grid">
+                    <div class="bento-card bento-calendar slide-up stagger-1"><div class="bento-card-label"><span class="bcl-dot" style="background:var(--emerald);"></span> Weekly Meal Plan</div><div class="week-header"><div class="week-title" id="week-title-text">April 14 – 20, 2026</div><div class="week-nav"><button class="week-nav-btn" id="week-prev">‹</button><button class="week-nav-btn" id="week-next">›</button></div></div><div class="week-days" id="week-days"></div></div>
+                    <div class="bento-card bento-macros slide-up stagger-2"><div class="bento-card-label"><span class="bcl-dot" style="background:var(--citrus);"></span> Today's Macros</div><div class="macro-rings-wrap"><svg class="macro-rings-svg" viewBox="0 0 180 180"><circle class="macro-ring-track" cx="90" cy="90" r="38"/><circle class="macro-ring-fill macro-ring-fat" cx="90" cy="90" r="38" stroke-dasharray="238.8" stroke-dashoffset="238.8" data-target="72" transform="rotate(-90 90 90)" id="dash-ring-fat"/><circle class="macro-ring-track" cx="90" cy="90" r="54"/><circle class="macro-ring-fill macro-ring-carbs" cx="90" cy="90" r="54" stroke-dasharray="339.3" stroke-dashoffset="339.3" data-target="102" transform="rotate(-90 90 90)" id="dash-ring-carbs"/><circle class="macro-ring-track" cx="90" cy="90" r="70"/><circle class="macro-ring-fill macro-ring-protein" cx="90" cy="90" r="70" stroke-dasharray="439.8" stroke-dashoffset="439.8" data-target="110" transform="rotate(-90 90 90)" id="dash-ring-protein"/></svg><div class="macro-center"><div class="macro-cal-num" id="dash-cal-num">0</div><div class="macro-cal-label">kcal</div></div></div><div class="macro-legend"><div class="macro-legend-item"><span class="macro-legend-dot" style="background:var(--protein-color);"></span> Protein</div><div class="macro-legend-item"><span class="macro-legend-dot" style="background:var(--carbs-color);"></span> Carbs</div><div class="macro-legend-item"><span class="macro-legend-dot" style="background:var(--violet);"></span> Fat</div></div></div>
+                    <div class="bento-card bento-meals slide-up stagger-3"><div class="bento-card-label"><span class="bcl-dot" style="background:var(--violet);"></span> Today's Meals</div><div class="meals-scroll" id="meals-scroll"><div class="meal-card"><div class="meal-card-img" style="background-image: url('https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80');"></div><div class="meal-card-tag breakfast">Breakfast</div><div class="meal-card-body"><div class="meal-card-name">Avocado Egg Toast</div><div class="meal-card-macros"><span class="mcm-protein">18g P</span><span class="mcm-carbs">28g C</span><span class="mcm-fat">14g F</span></div><button class="meal-log-btn" data-meal="breakfast">✓ Log Meal</button></div></div><div class="meal-card"><div class="meal-card-img" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80');"></div><div class="meal-card-tag lunch">Lunch</div><div class="meal-card-body"><div class="meal-card-name">Grilled Chicken Bowl</div><div class="meal-card-macros"><span class="mcm-protein">42g P</span><span class="mcm-carbs">38g C</span><span class="mcm-fat">12g F</span></div><button class="meal-log-btn" data-meal="lunch">✓ Log Meal</button></div></div><div class="meal-card"><div class="meal-card-img" style="background-image: url('https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80');"></div><div class="meal-card-tag dinner">Dinner</div><div class="meal-card-body"><div class="meal-card-name">Salmon Teriyaki</div><div class="meal-card-macros"><span class="mcm-protein">38g P</span><span class="mcm-carbs">42g C</span><span class="mcm-fat">18g F</span></div><button class="meal-log-btn" data-meal="dinner">✓ Log Meal</button></div></div><div class="meal-card"><div class="meal-card-img" style="background-image: url('https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80');"></div><div class="meal-card-tag snack">Snack</div><div class="meal-card-body"><div class="meal-card-name">Greek Yogurt & Berries</div><div class="meal-card-macros"><span class="mcm-protein">15g P</span><span class="mcm-carbs">22g C</span><span class="mcm-fat">4g F</span></div><button class="meal-log-btn" data-meal="snack">✓ Log Meal</button></div></div></div></div>
+                    <div class="bento-card bento-progress slide-up stagger-4"><div class="bento-card-label"><span class="bcl-dot" style="background:var(--sky);"></span> Daily Progress</div><div class="progress-section"><div class="progress-header"><span class="progress-label">Calories</span><span class="progress-value" id="prog-cal-text">0 / 2,100</span></div><div class="progress-track"><div class="progress-fill calories" id="prog-cal-fill" style="width:0%;"></div></div></div><div class="progress-section"><div class="progress-header"><span class="progress-label">Water</span><span class="progress-value" id="prog-water-text">0 / 8 glasses</span></div><div class="progress-track"><div class="progress-fill water" id="prog-water-fill" style="width:0%;"></div></div></div><div class="progress-section"><div class="progress-header"><span class="progress-label">Steps</span><span class="progress-value" id="prog-steps-text">0 / 10,000</span></div><div class="progress-track"><div class="progress-fill steps" id="prog-steps-fill" style="width:0%;"></div></div></div></div>
+                    <div class="bento-card bento-actions slide-up stagger-5"><div class="bento-card-label"><span class="bcl-dot" style="background:var(--coral);"></span> Quick Actions</div><div class="actions-row"><button class="action-btn primary" id="action-generate"><span class="a-icon">✨</span> Generate New Plan</button><button class="action-btn secondary" id="action-add-meal"><span class="a-icon">➕</span> Log a Meal</button><button class="action-btn secondary" id="action-view-grocery"><span class="a-icon">🛒</span> View Grocery List</button></div></div>
+                </div>
+            </div>
+
+            <!-- ─── GROCERY VIEW ─── -->
+            <div class="app-view" id="view-grocery" style="display:none;">
+                <div class="grocery-header"><div><h1>🛒 Grocery List</h1><p style="color:var(--text-secondary);margin-top:4px;font-size:0.9rem;">Sorted by C-Engine — optimized for your store layout</p></div><div class="grocery-header-actions"><button class="gh-btn outline" id="btn-add-all-cart">🛍️ Add All to Cart</button><button class="gh-btn fill" id="btn-add-item">+ Add Item</button></div></div>
+                <div class="grocery-stats"><div class="g-stat"><div class="g-stat-value" id="g-total-items">24</div><div class="g-stat-label">Total Items</div></div><div class="g-stat completed"><div class="g-stat-value" id="g-completed-items">0</div><div class="g-stat-label">In Cart</div></div><div class="g-stat remaining"><div class="g-stat-value" id="g-remaining-items">24</div><div class="g-stat-label">Remaining</div></div><div class="g-stat"><div class="g-stat-value" style="color:var(--sky);" id="g-est-cost">~₹720</div><div class="g-stat-label">Estimated Cost</div></div></div>
+                <div class="grocery-categories" id="grocery-categories"></div>
+            </div>
+
+            <!-- ─── CART VIEW ─── -->
+            <div class="app-view" id="view-cart" style="display:none;">
+                <div class="grocery-header"><div><h1>🛍️ Shopping Cart</h1><p style="color:var(--text-secondary);margin-top:4px;font-size:0.9rem;">Review your items before checkout</p></div></div>
+                <div class="cart-summary-bar" id="cart-summary-bar">
+                    <div class="cart-sum-left"><span class="cart-sum-count" id="cart-sum-count">0 items</span><span class="cart-sum-total" id="cart-sum-total">₹0.00</span></div>
+                    <div class="cart-sum-actions">
+                        <button class="cart-action-btn buy-later" id="btn-buy-later">🕐 Buy Later</button>
+                        <button class="cart-action-btn cancel" id="btn-cancel-cart">✕ Cancel</button>
+                        <button class="cart-action-btn buy" id="btn-buy-now">💳 Buy Now</button>
+                    </div>
+                </div>
+                <div class="cart-items-list" id="cart-items-list"><div class="cart-empty">Your cart is empty. Add items from the Grocery List!</div></div>
+            </div>
+
+            <!-- ─── SETTINGS VIEW ─── -->
+            <div class="app-view" id="view-settings" style="display:none;">
+                <div class="grocery-header"><div><h1>⚙️ Settings</h1><p style="color:var(--text-secondary);margin-top:4px;font-size:0.9rem;">Update your biometrics and preferences</p></div></div>
+                <div class="settings-grid">
+                    <div class="settings-card">
+                        <h3>🧬 Biometrics</h3>
+                        <div class="settings-field"><label>Gender</label><select id="set-gender" class="form-input"><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select></div>
+                        <div class="settings-field"><label>Age</label><input type="number" id="set-age" class="form-input" min="16" max="100" value="25"></div>
+                        <div class="settings-field"><label>Height (cm)</label><input type="number" id="set-height" class="form-input" min="100" max="250" value="170"></div>
+                        <div class="settings-field"><label>Weight (kg)</label><input type="number" id="set-weight" class="form-input" min="30" max="250" step="0.1" value="70"></div>
+                        <div class="settings-field"><label>Activity Level</label><select id="set-activity" class="form-input"><option value="sedentary">Sedentary</option><option value="moderate">Moderate</option><option value="active">Active</option><option value="athlete">Athlete</option></select></div>
+                        <div class="settings-field"><label>Goal</label><select id="set-goal" class="form-input"><option value="maintain">Maintain Weight</option><option value="lose_weight">Lose Weight</option><option value="build_muscle">Build Muscle</option><option value="high_protein">High Protein</option></select></div>
+                        <button class="auth-btn" id="btn-save-settings" style="margin-top:16px;"><span class="btn-text">💾 Save & Recalculate</span><div class="btn-spinner"></div></button>
+                    </div>
+                    <div class="settings-card">
+                        <h3>📊 Your Calculated Targets</h3>
+                        <div class="targets-display">
+                            <div class="target-item"><div class="target-val" id="target-cal">—</div><div class="target-label">Daily Calories</div></div>
+                            <div class="target-item"><div class="target-val" id="target-protein" style="color:var(--coral);">—</div><div class="target-label">Protein (g)</div></div>
+                            <div class="target-item"><div class="target-val" id="target-carbs" style="color:var(--citrus);">—</div><div class="target-label">Carbs (g)</div></div>
+                            <div class="target-item"><div class="target-val" id="target-fat" style="color:var(--violet);">—</div><div class="target-label">Fat (g)</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ═══════════════════════════ PAYMENT GATEWAY MODAL ═══════════════════════════ -->
+    <div class="modal-overlay" id="payment-modal-overlay">
+        <div class="payment-modal" id="payment-modal">
+            <button class="modal-close" id="payment-modal-close">✕</button>
+            <div class="pm-header">
+                <div class="pm-logo">
+                    <div class="brand-logo-wrap brand-logo-sm"><img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=60&h=60&fit=crop&q=90" alt="" class="brand-logo-img"><div class="brand-logo-badge">S</div></div>
+                    <span style="font-weight:800;font-size:1.1rem;">SmartMeal Pay</span>
+                </div>
+                <div class="pm-amount" id="pm-amount">₹0.00</div>
+                <div class="pm-order-id" id="pm-order-id">Order #—</div>
+            </div>
+            <div class="pm-tabs">
+                <button class="pm-tab active" data-method="qr">📱 QR</button>
+                <button class="pm-tab" data-method="phonepe">💜 PhonePe</button>
+                <button class="pm-tab" data-method="wallet">👛 Wallet</button>
+                <button class="pm-tab" data-method="card">💳 Card</button>
+            </div>
+            <div class="pm-body">
+                <!-- QR Tab -->
+                <div class="pm-panel active" id="pm-panel-qr">
+                    <div class="qr-wrapper">
+                        <div class="qr-container" id="qr-container"></div>
+                        <div class="qr-label">Scan to Pay via UPI</div>
+                        <p style="font-size:0.8rem;color:var(--text-muted);margin-top:4px;">QR code dynamically generated for this order.</p>
+                        <div class="qr-txn-id" id="qr-txn-id">TXN: —</div>
+                    </div>
+                    <div class="qr-status-bar" id="qr-status-bar">
+                        <div class="qr-pulse-dot"></div>
+                        <span>Awaiting Payment Confirmation...</span>
+                    </div>
+                    <div class="pm-timer">⏳ QR valid for <span id="qr-timer">300</span>s</div>
+                </div>
+                <!-- PhonePe Tab -->
+                <div class="pm-panel" id="pm-panel-phonepe">
+                    <div class="upi-form"><label class="form-label">PhonePe UPI ID</label><input type="text" class="form-input" id="phonepe-upi" placeholder="yourname@ybl"><button class="auth-btn" id="btn-pay-phonepe" style="margin-top:16px;">Pay with PhonePe</button></div>
+                </div>
+                <!-- Wallet Tab -->
+                <div class="pm-panel" id="pm-panel-wallet">
+                    <div class="wallet-balance"><div class="wb-icon">👛</div><div><div class="wb-label">SmartMeal Wallet</div><div class="wb-amount">₹2,500.00</div></div></div>
+                    <button class="auth-btn" id="btn-pay-wallet" style="margin-top:24px;">Pay from Wallet</button>
+                </div>
+                <!-- Card Tab -->
+                <div class="pm-panel" id="pm-panel-card">
+                    <div class="card-form"><div class="form-group"><label class="form-label">Card Number</label><input type="text" class="form-input" id="card-number" placeholder="4242 4242 4242 4242" maxlength="19"></div><div class="form-row"><div class="form-group"><label class="form-label">Expiry</label><input type="text" class="form-input" id="card-expiry" placeholder="MM/YY" maxlength="5"></div><div class="form-group"><label class="form-label">CVV</label><input type="password" class="form-input" id="card-cvv" placeholder="•••" maxlength="3"></div></div><button class="auth-btn" id="btn-pay-card" style="margin-top:16px;">Pay with Card</button></div>
+                </div>
+            </div>
+            <!-- Success State -->
+            <div class="pm-success" id="pm-success" style="display:none;">
+                <div class="success-check">✅</div>
+                <h3>Payment Successful!</h3>
+                <p id="pm-success-msg">Your order has been placed.</p>
+                <button class="auth-btn" id="btn-close-success" style="margin-top:20px;">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
