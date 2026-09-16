@@ -79,6 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('smartmeal_bio');
     // Clear NextAuth session if it exists (don't redirect yet)
     await nextAuthSignOut({ redirect: false });
+    window.location.href = '/auth';
   };
 
   return (

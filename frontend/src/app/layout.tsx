@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import { AuthProvider } from "@/lib/auth-context";
+import { SettingsProvider } from "@/lib/settings-context";
+import { ProgressProvider } from "@/lib/progress-context";
+import { ToastProvider } from "@/lib/toast-context";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
 
 export const metadata: Metadata = {
   title: "SmartMeal — AI-Powered Meal Planning",
@@ -20,9 +23,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={`antialiased ${inter.className}`}>
-        <AuthProvider>{children}</AuthProvider>
+    <html lang="en" className="antialiased">
+      <body className={`${jakarta.variable} font-sans`}>
+        <ToastProvider>
+          <SettingsProvider>
+            <ProgressProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </ProgressProvider>
+          </SettingsProvider>
+        </ToastProvider>
       </body>
     </html>
   );

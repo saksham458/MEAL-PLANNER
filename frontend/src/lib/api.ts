@@ -1,9 +1,9 @@
 /**
  * SmartMeal API Client
- * Handles all communication with the FastAPI backend at localhost:8000
+ * Fetches real data from the Next.js API Routes.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_BASE = '/api';
 
 interface ApiOptions extends RequestInit {
   token?: string;
@@ -28,7 +28,6 @@ export async function api<T = unknown>(path: string, options: ApiOptions = {}): 
     ...(customHeaders as Record<string, string>),
   };
 
-  // Add auth token if available
   const authToken = token || (typeof window !== 'undefined' ? localStorage.getItem('smartmeal_token') : null);
   if (authToken) {
     headers['Authorization'] = `Bearer ${authToken}`;
@@ -38,11 +37,16 @@ export async function api<T = unknown>(path: string, options: ApiOptions = {}): 
   try {
     res = await fetch(`${API_BASE}${path}`, { ...rest, headers });
   } catch (err) {
-    console.error(`🔴 Network Error: Failed to connect to backend at ${API_BASE}${path}. Is the FastAPI server running?`, err);
-    throw new ApiError(503, "Cloud not connect to the backend server. Please ensure it is running.");
+    console.error(`🔴 Network Error: Failed to fetch ${API_BASE}${path}.`, err);
+    throw new ApiError(503, "Could not connect to the API server.");
   }
 
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    data = {};
+  }
 
   if (!res.ok) {
     throw new ApiError(res.status, data.detail || `API error ${res.status}`);
@@ -61,189 +65,140 @@ export interface AuthResponse {
 }
 
 export async function loginUser(email: string, password: string): Promise<AuthResponse> {
-  return api<AuthResponse>('/auth/login', {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-  });
+  return api<AuthResponse>('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) });
 }
 
-export async function registerUser(
-  email: string,
-  password: string,
-  firstName: string,
-  lastName: string = ''
-): Promise<AuthResponse> {
-  return api<AuthResponse>('/auth/register', {
-    method: 'POST',
-    body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
-  });
+export async function registerUser(email: string, password: string, firstName: string, lastName: string = ''): Promise<AuthResponse> {
+  return api<AuthResponse>('/auth/register', { method: 'POST', body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }) });
 }
 
 // ── Settings / Biometrics ───────────────────────────────────
 export interface Biometrics {
-  gender: string;
-  age: number;
-  height_cm: number;
-  weight_kg: number;
-  activity_level: string;
-  daily_calories: number;
-  daily_protein_g: number;
-  daily_carbs_g: number;
-  daily_fat_g: number;
-  dietary_goal: string;
+  gender: string; age: number; height_cm: number; weight_kg: number;
+  activity_level: string; daily_calories: number; daily_protein_g: number;
+  daily_carbs_g: number; daily_fat_g: number; dietary_goal: string;
 }
 
 export interface SettingsResponse {
-  user: {
-    id: number;
-    email: string;
-    first_name: string;
-    last_name: string;
-  };
+  user: { id: number; email: string; first_name: string; last_name: string; };
   biometrics: Biometrics;
 }
 
 export async function getSettings(): Promise<SettingsResponse> {
-  return api<SettingsResponse>('/settings');
+  return api<SettingsResponse>('/profile');
 }
 
 export async function updateSettings(data: Partial<Biometrics>): Promise<SettingsResponse> {
-  return api<SettingsResponse>('/settings', {
-    method: 'PUT',
-    body: JSON.stringify(data),
-  });
+  return api<SettingsResponse>('/profile', { method: 'POST', body: JSON.stringify(data) });
 }
 
 // ── Meals ───────────────────────────────────────────────────
-export interface Meal {
-  id: number;
-  day_of_week: number;
-  meal_type: string;
-  recipe_label: string;
-  recipe_image: string | null;
-  recipe_url: string | null;
+export interface MealIngredient {
+  name: string;
+  amount: number;
+  unit: string;
+  category?: string;
+}
+
+export interface MealOption {
+  option_id: string;
+  name: string;
   calories: number;
-  protein_g: number;
-  carbs_g: number;
-  fat_g: number;
-  is_logged: boolean;
+  protein: number;
+  carbs: number;
+  fats: number;
+  ingredients: MealIngredient[];
+  is_logged?: boolean;
 }
 
-export interface ProposedMeal {
-  temp_id: string;
-  day_of_week: number;
-  meal_type: string;
-  recipe_label: string;
-  recipe_image: string | null;
-  recipe_url: string | null;
-  recipe_yield: number;
-  calories: number;
-  protein_g: number;
-  carbs_g: number;
-  fat_g: number;
-  fiber_g: number;
-  ingredients_json: string;
-  edamam_uri: string;
-  is_high_protein: boolean;
+export interface MealTimestamp {
+  type: 'breakfast' | 'lunch' | 'dinner' | 'snacks';
+  options: MealOption[];
 }
 
-export interface WeeklyPlanProposal {
-  meals: ProposedMeal[];
+export interface DailyPlan {
+  day_of_week: string; // 'Monday', 'Tuesday', etc.
+  timestamps: MealTimestamp[];
 }
 
-export interface MealPlanResponse {
-  plan_id: number;
-  week_start: string;
-  week_end: string;
-  meals: Meal[];
-  total_calories: number;
-  total_protein: number;
+export interface WeeklyProposedPlan {
+  days: DailyPlan[];
 }
 
-export async function generateMealPlan(): Promise<MealPlanResponse> {
-  return api<MealPlanResponse>('/api/meals/generate', { method: 'POST', body: JSON.stringify({}) });
-}
-
-export async function proposeMealPlan(preferences?: string): Promise<WeeklyPlanProposal> {
-  return api<WeeklyPlanProposal>('/api/meals/propose', {
+export async function proposeMealPlan(preferences?: string): Promise<WeeklyProposedPlan> {
+  return api<WeeklyProposedPlan>('/meals/propose', {
     method: 'POST',
     body: JSON.stringify({ dietary_preferences: preferences }),
   });
 }
 
-export async function confirmMealPlan(meals: ProposedMeal[]): Promise<MealPlanResponse> {
-  return api<MealPlanResponse>('/api/meals/confirm', {
+export async function confirmMealPlan(plan: WeeklyProposedPlan): Promise<{ status: string }> {
+  return api<{ status: string }>('/meals/confirm', {
     method: 'POST',
-    body: JSON.stringify({ meals }),
+    body: JSON.stringify({ plan }),
   });
+}
+
+// Aliases for compatibility
+export type Meal = MealOption;
+export type ProposedMealPlan = WeeklyProposedPlan;
+
+export interface GroceryItem {
+  name: string;
+  category: string;
+  weight_g: number;
+  aisle: string;
 }
 
 // ── Grocery ─────────────────────────────────────────────────
 export interface GroceryAisle {
   name: string;
   emoji: string;
-  items: { name: string; category: string; weight_g: number; aisle: string }[];
+  items: GroceryItem[];
 }
 
 export interface GroceryListResponse {
   aisles: GroceryAisle[];
-  total_items: number;
-  sort_time_ms: number;
-  engine: string;
-  plan_id: number;
-  week: string;
 }
 
 export async function getGroceryList(): Promise<GroceryListResponse> {
-  return api<GroceryListResponse>('/api/grocery-list');
+  return api<GroceryListResponse>('/grocery-list');
 }
 
 export async function saveGroceryCart(items: string[]): Promise<{ status: string }> {
-  return api<{ status: string }>('/api/grocery-list/save', {
-    method: 'POST',
-    body: JSON.stringify({ cart_json: items }),
-  });
+  return api<{ status: string }>('/grocery-list/save', { method: 'POST', body: JSON.stringify({ cart_json: items }) });
 }
 
 export async function getSavedGroceryCart(): Promise<{ items: string[] }> {
-  return api<{ items: string[] }>('/api/grocery-list/saved');
+  return api<{ items: string[] }>('/grocery-list/saved');
 }
 
 // ── Progress ────────────────────────────────────────────────
 export interface MacroProgress {
-  consumed: number;
-  target: number;
-  percentage: number;
-  unit?: string;
+  consumed: number; target: number; percentage: number; unit?: string;
 }
 
 export interface DailyProgress {
   date: string;
-  calories: MacroProgress;
-  protein: MacroProgress;
-  carbs: MacroProgress;
-  fat: MacroProgress;
-  water_glasses: number;
-  steps: number;
-  meals_logged: number;
-  total_meals: number;
+  consumed_calories: number;
+  consumed_protein_g: number;
+  consumed_carbs_g: number;
+  consumed_fat_g: number;
+  water_glasses: number; steps: number; meals_logged: number; total_meals: number;
 }
 
 export async function getTodayProgress(): Promise<DailyProgress> {
-  return api<DailyProgress>('/api/progress/today');
+  return api<DailyProgress>('/progress/today');
 }
 
 export async function logWaterIntake(glasses: number): Promise<{ message: string, glasses: number }> {
-  return api<{ message: string, glasses: number }>('/api/progress/water', {
-    method: 'POST',
-    body: JSON.stringify({ glasses }),
-  });
+  return api<{ message: string, glasses: number }>('/progress/water', { method: 'POST', body: JSON.stringify({ glasses }) });
 }
 
 export async function logSteps(steps: number): Promise<{ message: string, steps: number }> {
-  return api<{ message: string, steps: number }>('/api/progress/steps', {
-    method: 'POST',
-    body: JSON.stringify({ steps }),
-  });
+  return api<{ message: string, steps: number }>('/progress/steps', { method: 'POST', body: JSON.stringify({ steps }) });
 }
 
+export async function logMeal(mealId: string | number): Promise<{ message: string }> {
+  return api<{ message: string }>('/progress/meal', { method: 'POST', body: JSON.stringify({ mealId }) });
+}
